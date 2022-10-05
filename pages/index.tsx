@@ -1,10 +1,24 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
+import { useRef, useState } from 'react'
 
 const Home: NextPage = () => {
+
+  const inputRef = useRef<HTMLInputElement>(null)
+  const [currentFile, setCurrentFile] = useState('')
+
+  const fileChange = (event: InputEvent) => {
+    if (!(event.target! as HTMLInputElement).files && (event.target as HTMLInputElement).files![0]) {
+      return;
+    }
+    const fileObj = (event.target! as HTMLInputElement).files && (event.target as HTMLInputElement).files![0]
+    const fileExtension = fileObj!.name.split('.').pop()
+    fileExtension === 'txt' || fileExtension === 'json' ? setCurrentFile(fileObj!.name) : setCurrentFile('Please select a valid file.') 
+  }
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
+    <div className="flex min-h-screen flex-col items-center justify-center py-2 bg-black">
       <Head>
         <title>Create Next App</title>
         <link rel="icon" href="/favicon.ico" />
@@ -13,59 +27,34 @@ const Home: NextPage = () => {
       <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
         <h1 className="text-6xl font-bold">
           Welcome to{' '}
-          <a className="text-blue-600" href="https://nextjs.org">
-            Next.js!
+          <a className="text-slate-400" href="https://nextjs.org">
+            Observatory!
           </a>
         </h1>
-
-        <p className="mt-3 text-2xl">
-          Get started by editing{' '}
-          <code className="rounded-md bg-gray-100 p-3 font-mono text-lg">
-            pages/index.tsx
-          </code>
-        </p>
-
-        <div className="mt-6 flex max-w-4xl flex-wrap items-center justify-around sm:w-full">
-          <a
-            href="https://nextjs.org/docs"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Documentation &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Find in-depth information about Next.js features and its API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Learn &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Learn about Next.js in an interactive course with quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Examples &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Discover and deploy boilerplate example Next.js projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Deploy &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+        <button className="bg-slate-600 w-max h-6 rounded-lg m-4 border-none px-8 py-4 flex items-center justify-center" onClick={() => {
+          inputRef.current!.click();
+        }}><p className="text-slate-300">{currentFile ? currentFile : 'Weezy outta here'}</p>
+        </button>
+        <button className="bg-slate-600 w-max h-6 rounded-lg m-4 border-none px-8 py-4 flex items-center justify-center" onClick={async () => {
+          const songQuery = await fetch('/api/initial/');
+          const json = await songQuery.json()
+          window.location.href = json.auth_url;
+        }}><p className="text-slate-300">oh lawd connect me</p>
+        </button>
+        <button className="bg-slate-600 w-max h-6 rounded-lg m-4 border-none px-8 py-4 flex items-center justify-center" onClick={async () => {
+          const songQuery = await fetch(`https://api.github.com/users/${window.location.href.replace('http://localhost:3000/?user=', '')}/starred`);
+          const json = await songQuery.json()
+          const starTest = await fetch(`https://api.github.com/user/starred/${json[0].owner.login}/${json[0].owner.name}`, {
+            method: 'PUT',
+          })
+        }}><p className="text-slate-300">get stars</p>
+        </button>
+        <input
+          style={{ display: 'none' }}
+          ref={inputRef}
+          type="file"
+          onChange={fileChange}
+        />
       </main>
 
       <footer className="flex h-24 w-full items-center justify-center border-t">

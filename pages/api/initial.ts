@@ -5,7 +5,7 @@ const { GITHUB_CLIENT_ID: githubClient, GITHUB_SECRET_ID: githubSecret } = proce
 
 const initial = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(200).json({
-        auth_url: `https://github.com/login/oauth/authorize?client_id=${githubClient}`
+        auth_url: `https://github.com/login/oauth/authorize?scope=public_repo&client_id=${githubClient}`
     })
 }
 

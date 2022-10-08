@@ -1,11 +1,13 @@
-import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
 import Buttons from '../components/Buttons'
 import FileUpload from '../components/FileUpload'
 import Heading from '../components/Heading'
 
-const Home: NextPage = () => {
+interface Props {
+  githubClientID: string;
+}
+
+export default function Home ({githubClientID}: Props) {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2 bg-black">
@@ -17,7 +19,7 @@ const Home: NextPage = () => {
       <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
         <Heading />
         <FileUpload />
-        <Buttons />
+        <Buttons cid={githubClientID}/>
       </main>
 
       <footer className="flex h-24 w-full items-center justify-center border-t">
@@ -35,8 +37,11 @@ const Home: NextPage = () => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({query} => ) {
-  
+export async function getStaticProps() {
+  const { GITHUB_CLIENT_ID: githubClient } = process.env;
+  return {
+    props: {
+      githubClientID: githubClient,
+    },
+  }
 }
-
-export default Home

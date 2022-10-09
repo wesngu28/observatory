@@ -1,6 +1,7 @@
 import { createContext } from "react";
+import SimpleRepo from "../interfaces/SimpleRepo";
 
 export const TableContext = createContext( {
-    table: {} as any,
+    table: {} as { unstarredRepos: Array<SimpleRepo> } ,
     setTable: (data: any) => {}
 })

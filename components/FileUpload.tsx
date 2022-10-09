@@ -1,5 +1,6 @@
 import { SyntheticEvent, useContext, useRef, useState } from 'react'
 import { TableContext } from '../contexts/TableContext'
+import SimpleRepo from '../interfaces/SimpleRepo';
 interface Props {
     cid?: string;
 }
@@ -10,7 +11,7 @@ export default function FileUpload({ cid }: Props) {
     const [currentFileName, setCurrentFileName] = useState('')
     const [currentFile, setCurrentFile] = useState<File>()
     const [finding, setFinding] = useState(false)
-    const { setTable } = useContext(TableContext)
+    const { table, setTable } = useContext(TableContext)
 
     const fileChange = async (event: SyntheticEvent) => {
         if (!(event.target! as HTMLInputElement).files && (event.target as HTMLInputElement).files![0]) {
@@ -43,8 +44,13 @@ export default function FileUpload({ cid }: Props) {
             }
         );
         const repoListJson = await repoList.json()
-        setTable(repoListJson)
-        setFinding(false)
+        if(repoListJson.error) {
+            setTable({} as { unstarredRepos: Array<SimpleRepo> })
+            setFinding(false)
+        } else {
+            setTable(repoListJson)
+            setFinding(false)
+        }
     }
 
     return (

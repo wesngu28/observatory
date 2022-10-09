@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { parse } from "node-html-parser";
 import { Octokit } from "octokit";
 import querystring from 'query-string'
-import { getStarredRepos } from "../../stargazing/starcrossed";
+import { getStarredRepos } from "../../helper/getStarredRepos";
 
 const parseRepo = async (req: NextApiRequest, res: NextApiResponse) => {
     const octokit = new Octokit({
@@ -42,6 +42,7 @@ const parseRepo = async (req: NextApiRequest, res: NextApiResponse) => {
             const html = parse(text);
             const github = html.querySelector('.github-repo-info')?.getAttribute('data-url')
             if (github) return github.replace('https://api.github.com/repos/', '')
+            if (!pipName.replace('https://pypi.org/project/', '')) return
             const queryString = querystring.stringify({
                 q: `${pipName.replace('https://pypi.org/project/', '')} in:name`,
                 sort: 'stars',
@@ -53,6 +54,7 @@ const parseRepo = async (req: NextApiRequest, res: NextApiResponse) => {
         })
         packageList = await Promise.all(pipPackagefmt);
     }
+    packageList = packageList.filter(repo => repo !== undefined)
     const username = await octokit.request('GET /user', {})
     const starredRepos = await getStarredRepos(username.data.login, octokit)
     let gitHubUrls = packageList.map((dependency: string) => {
@@ -65,16 +67,17 @@ const parseRepo = async (req: NextApiRequest, res: NextApiResponse) => {
             const repoDetails = await octokit.request(`GET /repos/${dependency.replace('https://github.com/', '')}`)
             const repo = {
                 name: repoDetails.data.name,
-                author: repoDetails.data.name,
+                author: repoDetails.data.owner.login,
                 description: repoDetails.data.description,
                 url: repoDetails.data.html_url,
-                stargazers: repoDetails.data.stargazers_count,
-                watchers: repoDetails.data.watchers_count
+                authorUrl: repoDetails.data.owner.html_url,
+                stargazers: repoDetails.data.stargazers_count
             }
             return repo;
         }
     })
-    const unstarredRepos = await Promise.all(getUnstarredRepos)
+    let unstarredRepos = await Promise.all(getUnstarredRepos)
+    unstarredRepos = unstarredRepos.filter(repo => repo !== undefined)
     return res.status(200).json({
         unstarredRepos
     })

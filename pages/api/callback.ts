@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
-const { GITHUB_CLIENT_ID: githubClient, GITHUB_SECRET_ID: githubSecret } = process.env;
+const { GITHUB_CLIENT_ID: githubClient, GITHUB_SECRET_ID: githubSecret, NODE_ENV } = process.env;
 
 const callback = async (req: NextApiRequest, res: NextApiResponse) => {
     const code = req.query.code;
@@ -14,7 +14,7 @@ const callback = async (req: NextApiRequest, res: NextApiResponse) => {
     const auth_token = await response.json()
 
     res.setHeader('Set-Cookie', [
-        `accessToken=${auth_token.access_token}; HTTPOnly; Max-Age=${60000*24}; Domain=localhost; Path=/`
+        `accessToken=${auth_token.access_token}; HTTPOnly; Max-Age=${60000*24}; Domain=${NODE_ENV === 'production' ? 'procesobservatories.vercel.app' : 'localhost'};  Path=/`
     ])
 
     res.redirect(302, `/`);

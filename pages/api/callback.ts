@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { Octokit } from "octokit";
 
 const { GITHUB_CLIENT_ID: githubClient, GITHUB_SECRET_ID: githubSecret } = process.env;
 
@@ -13,7 +12,7 @@ const callback = async (req: NextApiRequest, res: NextApiResponse) => {
         },
     })
     const auth_token = await response.json()
-    
+
     res.setHeader('Set-Cookie', [
         `accessToken=${auth_token.access_token}; HTTPOnly; Max-Age=${60000*24}; Domain=localhost; Path=/`
     ])

@@ -1,38 +1,36 @@
 import Head from 'next/head'
 import Buttons from '../components/Buttons'
-import FileUpload from '../components/FileUpload'
 import Heading from '../components/Heading'
+import { useState } from 'react'
+import { TableContext } from '../contexts/TableContext'
+
+import Table from '../components/RepoTable'
+import Footer from '../components/Footer'
 
 interface Props {
   githubClientID: string;
 }
 
-export default function Home ({githubClientID}: Props) {
+export default function Home({ githubClientID }: Props) {
+
+  const [table, setTable] = useState({} as any)
+  const [login, setLogin] = useState('')
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2 bg-black">
+    <div className="flex w-full flex-1 flex-col items-center justify-center p-4 text-center">
       <Head>
-        <title>Create Next App</title>
+        <title>Observatory</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
-        <Heading />
-        <FileUpload />
-        <Buttons cid={githubClientID}/>
-      </main>
-
-      <footer className="flex h-24 w-full items-center justify-center border-t">
-        <a
-          className="flex items-center justify-center gap-2"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          Some Idiot in Seattle
-        </a>
-      </footer>
+      <Heading />
+      <TableContext.Provider value={{ table, setTable }}>
+        <Buttons cid={githubClientID} />
+        <div className="w-[100vw] md:w-[50vw]">
+          {table ? table.unstarredRepos ? <Table /> : null : null}
+        </div>
+      </TableContext.Provider>
+      <Footer />
     </div>
   )
 }

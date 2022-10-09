@@ -1,11 +1,11 @@
-import { useRef, useState } from 'react'
-import Table from './RepoTable'
+import { useContext, useRef, useState } from 'react'
+import { TableContext } from '../contexts/TableContext'
 export default function FileUpload() {
 
     const inputRef = useRef<HTMLInputElement>(null)
     const [currentFileName, setCurrentFileName] = useState('')
     const [currentFile, setCurrentFile] = useState<File>()
-    const [repos, setRepos] = useState({})
+    const { setTable } = useContext(TableContext)
 
     const fileChange = async (event: InputEvent) => {
         if (!(event.target! as HTMLInputElement).files && (event.target as HTMLInputElement).files![0]) {
@@ -18,6 +18,7 @@ export default function FileUpload() {
     }
 
     async function parseFile(file: File, fileExtension: string) {
+        setTable({})
         const repoList = await fetch(`/api/parse?ext=${fileExtension}`,
             {
                 method: 'POST',
@@ -25,13 +26,13 @@ export default function FileUpload() {
                 credentials: 'include'
             }
         );
-        setRepos(repoList)
-
+        const repoListJson = await repoList.json()
+        setTable(repoListJson)
     }
 
     return (
         <>
-            <div className="flex items-center">
+            <div className="p-4 flex items-center">
                 <button className="bg-slate-600 w-max h-6 rounded-lg m-4 border-none px-8 py-4 flex items-center justify-center font-bold" onClick={() => {
                     inputRef.current!.click();
                 }}><p className="text-slate-300">{currentFileName ? currentFileName : 'Upload a File'}</p>
@@ -50,9 +51,6 @@ export default function FileUpload() {
                 ><p className="text-slate-700">{currentFile ? 'Submit' : 'Submit'}</p>
                 </button>
             </div>
-            {/* <div>
-                <Table repos={repos} />
-            </div> */}
         </>
 
     )

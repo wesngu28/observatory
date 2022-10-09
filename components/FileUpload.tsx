@@ -1,6 +1,10 @@
 import { useContext, useRef, useState } from 'react'
 import { TableContext } from '../contexts/TableContext'
-export default function FileUpload() {
+interface Props {
+    cid?: string;
+}
+
+export default function FileUpload({ cid }: Props) {
 
     const inputRef = useRef<HTMLInputElement>(null)
     const [currentFileName, setCurrentFileName] = useState('')
@@ -19,6 +23,15 @@ export default function FileUpload() {
 
     async function parseFile(file: File, fileExtension: string) {
         setTable({})
+        const fetchTokenStatus = async () => {
+            const token = await fetch('/api/tokencheck', { credentials: 'include' })
+            const result: {
+                success: boolean
+            } = await token.json()
+            return result.success;
+        }
+        const tokenStatus = await fetchTokenStatus()
+        if(tokenStatus === false) window.location.href = `https://github.com/login/oauth/authorize?scope=public_repo&client_id=${cid}`;
         const repoList = await fetch(`/api/parse?ext=${fileExtension}`,
             {
                 method: 'POST',

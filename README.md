@@ -6,6 +6,13 @@ A web interface for the [auto-star stargazing script](https://github.com/wesngu2
 ```
 git clone https://github.com/wesngu28/observatory.git
 npm install
+```
+
+You then must visit the developer settings in your [Github](https://github.com/settings/developers) and create a new oauth app. Name it whatever, but change it's homepage url to http://localhost:3000 and its callback to http://localhost:3000/api/callback. 
+
+Create a file named .env.local in the root of the repository and create three environment variables, GITHUB_CLIENT_ID, GITHUB_SECRET_ID, and NODE_ENV. Set the client and secret ID to the ones in your oauth app's general settings (you will have to generate a secret ID) and set the node env to development. Now, you should be able to run it with:
+
+```
 npm run dev
 ```
 

@@ -1,6 +1,9 @@
 # Observatory
 A web interface for the [auto-star stargazing script](https://github.com/wesngu28/stargazing) that I made.
 
+## [Deployment Link](https://observatories.vercel.app/)
+
+
 ## Running Locally
 
 ```

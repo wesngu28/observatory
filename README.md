@@ -1,27 +1,17 @@
-# Next.js + Tailwind CSS Example
+# Observatory
+A web interface for the [auto-star stargazing script](https://github.com/wesngu28/stargazing) that I made.
 
-This example shows how to use [Tailwind CSS](https://tailwindcss.com/) [(v3.0)](https://tailwindcss.com/blog/tailwindcss-v3) with Next.js. It follows the steps outlined in the official [Tailwind docs](https://tailwindcss.com/docs/guides/nextjs).
+## Running Locally
 
-## Deploy your own
-
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example) or preview live with [StackBlitz](https://stackblitz.com/github/vercel/next.js/tree/canary/examples/with-tailwindcss)
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-tailwindcss&project-name=with-tailwindcss&repository-name=with-tailwindcss)
-
-## How to use
-
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
-
-```bash
-npx create-next-app --example with-tailwindcss with-tailwindcss-app
+```
+git clone https://github.com/wesngu28/observatory.git
+npm install
+npm run dev
 ```
 
-```bash
-yarn create next-app --example with-tailwindcss with-tailwindcss-app
-```
+## Notes
+This was a nice project to make and a good complement to the script I worked on previously. I really like the look of the base template you get from create-next-app, so I built the entire web app around the skeleton provided.
 
-```bash
-pnpm create next-app --example with-tailwindcss with-tailwindcss-app
-```
+Something I learned was setting http cookies to store the provided github access token. Although still vulnerable, http cookies are more secure than other alternatives like session or local storage.
 
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
+I also used useContext for the first time. It was a bit unnecessary but I now understand more of how it works.

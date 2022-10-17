@@ -12,15 +12,20 @@ const parseRepo = async (req: NextApiRequest, res: NextApiResponse) => {
         })
         let packageList: string[] = []
         if (req.query.ext!.includes('.json')) {
-            const dependencies = Object.keys(req.body.dependencies)
-            const devDependencies = Object.keys(req.body.devDependencies)
             const npmPackages: string[] = [];
-            dependencies.forEach(dependencies => {
-                npmPackages.push(`https://www.npmjs.com/package/${dependencies}`)
-            })
-            devDependencies.forEach(devDependency => {
-                npmPackages.push(`https://www.npmjs.com/package/${devDependency}`)
-            })
+            if (req.body.dependencies) {
+                const dependencies = Object.keys(req.body.dependencies)
+                dependencies.forEach(dependencies => {
+                    npmPackages.push(`https://www.npmjs.com/package/${dependencies}`)
+                })
+            }
+            if (req.body.devDependencies) {
+                const devDependencies = Object.keys(req.body.devDependencies)
+                devDependencies.forEach(devDependency => {
+                    console.log(devDependency)
+                    npmPackages.push(`https://www.npmjs.com/package/${devDependency}`)
+                })
+            }
             const npmPackagefmt = npmPackages.map(async (dependency: string) => {
                 const response = await fetch(dependency);
                 const text = await response.text();
@@ -84,6 +89,7 @@ const parseRepo = async (req: NextApiRequest, res: NextApiResponse) => {
             unstarredRepos
         })
     } catch (err) {
+        console.log(err)
         return res.status(200).json({
             unstarredRepos: [
                 {

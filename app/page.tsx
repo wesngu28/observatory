@@ -1,6 +1,7 @@
+"use client"
 import Head from 'next/head'
 import Heading from '../components/Heading'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { TableContext } from '../contexts/TableContext'
 
 import Table from '../components/RepoTable'
@@ -8,13 +9,24 @@ import Footer from '../components/Footer'
 import FileUpload from '../components/FileUpload'
 import SimpleRepo from '../interfaces/SimpleRepo'
 
-interface Props {
-  githubClientID: string;
+async function checkToken() {
+  const token = await fetch('/api/tokencheck', { credentials: 'include' })
+  const result: { success: boolean } = await token.json()
+  return result;
 }
 
-export default function Home({ githubClientID }: Props) {
+export default function Home() {
 
+  const [logged, setLogged] = useState(false)
   const [table, setTable] = useState({} as { unstarredRepos: Array<SimpleRepo> } )
+
+  useEffect(() => {
+    async function token() {
+      const status = await checkToken()
+      setLogged(status.success)
+    }
+    token()
+  })
 
   return (
     <div className="flex w-full min-h-screen flex-1 flex-col items-center justify-center p-4 text-center">
@@ -40,7 +52,8 @@ export default function Home({ githubClientID }: Props) {
 
       <Heading />
       <TableContext.Provider value={{ table, setTable }}>
-        <FileUpload cid={githubClientID} />
+        <FileUpload logged={logged} cid={process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID} />
+        {logged ? "Hello logged in" : "Get out"}
         <div className="w-[100vw] md:w-[50vw]">
           {table ? table.unstarredRepos ? <Table /> : null : null}
         </div>
@@ -48,13 +61,4 @@ export default function Home({ githubClientID }: Props) {
       <Footer />
     </div>
   )
-}
-
-export async function getStaticProps() {
-  const { GITHUB_CLIENT_ID: githubClient } = process.env;
-  return {
-    props: {
-      githubClientID: githubClient,
-    },
-  }
 }

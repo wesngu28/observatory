@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState, useContext } from "react";
 import { TableContext } from "../contexts/TableContext";
 import starTargetRepo from "../helper/starTargetRepo";

@@ -18,7 +18,7 @@ export default function Table() {
     })
 
     return (
-        table.table.unstarredRepos[0].author === 'RB for the Pittsburgh Steelers' ? <p>We've been tricked, we've been backstabbed and we've been quite possibly, bamboozled.</p> : 
+        table?.table && table.table.length > 0 ? table.table[0] !== "Error" ? 
         <table className="m-auto p-4 text-left border-collapse table-fixed w-full">
             <caption className="p-4 m-4 text-lg">{starStatus}</caption>
             <thead>
@@ -27,7 +27,7 @@ export default function Table() {
                         return <th key={idx} className="font-bold text-center" title={item}>{item}</th>;
                     })}
                 </tr>
-                {table.table.unstarredRepos.map((repo: SimpleRepo, i: number) => {
+                {(table?.table as Array<SimpleRepo>).map((repo: SimpleRepo, i: number) => {
                     return (
                         <tr key={i} className="pr-0">
                             <td key={repo.name + i} className="text-center p-2 md:p-6"><p><a className="text-gray-400 hover:underline" href={repo.url}>
@@ -39,6 +39,6 @@ export default function Table() {
                     );
                 })}
             </thead>
-        </table>
+        </table> : <p>Something went wrong: {table.table[0]}</p> : null
     );
 }

@@ -7,7 +7,6 @@ import { TableContext, TableContextProvider } from '../contexts/TableContext'
 import Table from '../components/RepoTable'
 import Footer from '../components/Footer'
 import FileUpload from '../components/FileUpload'
-import SimpleRepo from '../interfaces/SimpleRepo'
 
 async function checkToken() {
   const token = await fetch('/api/tokencheck', { credentials: 'include' })
@@ -29,7 +28,7 @@ export default function Home() {
   })
 
   return (
-    <div className="flex w-full min-h-screen flex-1 flex-col items-center justify-center p-4 text-center">
+    <div className="flex w-full flex-1 flex-col items-center justify-center p-4 text-center">
       <Head>
         <title>Observatory</title>
         <meta charSet="UTF-8" />

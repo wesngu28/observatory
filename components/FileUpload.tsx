@@ -12,7 +12,6 @@ export default function FileUpload({ logged, cid }: Props) {
     const inputRef = useRef<HTMLInputElement>(null)
     const [currentFileName, setCurrentFileName] = useState('')
     const [currentFile, setCurrentFile] = useState<File>()
-    const [finding, setFinding] = useState(false)
     const table = useContext(TableContext)
 
     const fileChange = async (event: SyntheticEvent) => {
@@ -26,11 +25,8 @@ export default function FileUpload({ logged, cid }: Props) {
     }
 
     async function parseFile(fileExtension: string) {
-        setFinding(false)
         table?.setTable([])
-        console.log("cid")
         if (!logged) window.location.href = `https://github.com/login/oauth/authorize?scope=public_repo&client_id=${cid}`;
-        setFinding(true)
         const repoList = await fetch(`/api/parse?ext=${fileExtension}`,
             {
                 method: 'POST',
@@ -43,7 +39,6 @@ export default function FileUpload({ logged, cid }: Props) {
             table?.setTable("Error")
         } else {
             table?.setTable(repoListJson)
-            setFinding(false)
         }
     }
 
@@ -74,7 +69,7 @@ export default function FileUpload({ logged, cid }: Props) {
                     : <button className="bg-slate-600 w-max h-6 rounded-lg m-4 border-none px-8 py-4 flex items-center justify-center font-bold" onClick={() => parseFile(`.${currentFileName.split('.').pop()!}`)}><p className="text-slate-300">Log In</p>
                     </button>}
                 </div>
-                {finding ? <p>Getting repositories...</p> : null}
+                {table?.table && table.table.length > 0 ? <p>Getting repositories...</p> : null}
             </div>
         </>
 

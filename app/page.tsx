@@ -1,8 +1,8 @@
 "use client"
 import Head from 'next/head'
 import Heading from '../components/Heading'
-import { useEffect, useState } from 'react'
-import { TableContext } from '../contexts/TableContext'
+import { useContext, useEffect, useState } from 'react'
+import { TableContext, TableContextProvider } from '../contexts/TableContext'
 
 import Table from '../components/RepoTable'
 import Footer from '../components/Footer'
@@ -18,7 +18,7 @@ async function checkToken() {
 export default function Home() {
 
   const [logged, setLogged] = useState(false)
-  const [table, setTable] = useState({} as { unstarredRepos: Array<SimpleRepo> } )
+  const table = useContext(TableContext)
 
   useEffect(() => {
     async function token() {
@@ -51,13 +51,13 @@ export default function Home() {
       </Head>
 
       <Heading />
-      <TableContext.Provider value={{ table, setTable }}>
+      <TableContextProvider>
         <FileUpload logged={logged} cid={process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID} />
         {logged ? "Hello logged in" : "Get out"}
         <div className="w-[100vw] md:w-[50vw]">
-          {table ? table.unstarredRepos ? <Table /> : null : null}
+          <Table />
         </div>
-      </TableContext.Provider>
+      </TableContextProvider>
       <Footer />
     </div>
   )

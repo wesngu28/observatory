@@ -36,7 +36,7 @@ export default function FileUpload({ logged, cid }: Props) {
         );
         const repoListJson = await repoList.json()
         if(repoListJson.error) {
-            table?.setTable("Error")
+            table?.setTable("Error: " + repoListJson.error)
         } else {
             table?.setTable(repoListJson)
         }

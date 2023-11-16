@@ -14,7 +14,7 @@ export async function PUT (req: Request) {
         repo: String(params.searchParams.get('name'))
     })
 
-    return new Response(`Successfuly starred ${String(params.searchParams.get('name'))}`, {
+    return new Response(`Successfully starred ${String(params.searchParams.get('name'))}`, {
         status: 200
     })
 }
@@ -31,7 +31,7 @@ export async function DELETE(req: Request) {
         repo: String(params.searchParams.get('name'))
     })
 
-    return new Response(`Successfuly unstarred ${String(params.searchParams.get('name'))}`, {
+    return new Response(`Successfully unstarred ${String(params.searchParams.get('name'))}`, {
         status: 200
     })
 }

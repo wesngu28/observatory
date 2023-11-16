@@ -27,7 +27,11 @@ export async function POST(req: Request) {
                 const response = await fetch(npmPackages[i]);
                 const text = await response.text();
                 const html = parse(text);
-                packageList.push(html.querySelector('#repository-link')!.text.replace('github.com/', ''))
+                if (html.querySelector('#repository-link')) {
+                    let repo = html.querySelector('#repository-link')!.text
+                    if (repo.includes('/tree')) repo = repo.slice(0, repo.indexOf('/tree'))
+                    if (repo.includes('github.com/')) packageList.push(repo.replace('github.com/', ''))
+                }
             }
         }
         if (extension.includes('.txt')) {
@@ -78,8 +82,7 @@ export async function POST(req: Request) {
             }
         }
         return Response.json(unstarredRepos)
-    } catch (err) {
-        console.log(err)
+    } catch (err: any) {
+        return new Response(err, {status: 500})
     }
-    return Response
 }

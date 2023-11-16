@@ -52,7 +52,6 @@ export default function Home() {
       <Heading />
       <TableContextProvider>
         <FileUpload logged={logged} cid={process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID} />
-        {logged ? "Hello logged in" : "Get out"}
         <div className="w-[100vw] md:w-[50vw]">
           <Table />
         </div>

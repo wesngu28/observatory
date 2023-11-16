@@ -3,6 +3,7 @@ import parse from "node-html-parser";
 import { Octokit } from "octokit";
 import { getStarredRepos } from "../../../helper/getStarredRepos";
 import SimpleRepo from "../../../interfaces/SimpleRepo";
+import { stringify } from "querystring";
 
 export async function POST(req: Request) {
     const cookieStore = cookies()
@@ -28,6 +29,35 @@ export async function POST(req: Request) {
                 const html = parse(text);
                 packageList.push(html.querySelector('#repository-link')!.text.replace('github.com/', ''))
             }
+        }
+        if (extension.includes('.txt')) {
+            const textSplit = (await new Response(req.body!).text()).split("\n");
+            const pypiPackages: string[] = textSplit.map((requirement: string) => {
+                const equals = requirement.indexOf('=')
+                const equalToEnd = requirement.substring(equals, requirement.length)
+                requirement = requirement.replace(equalToEnd, '')
+                return requirement
+            })
+            for (let i = 0; i < pypiPackages.length; i++) {
+                const pipName = `https://pypi.org/project/${pypiPackages[i]}`
+                const response = await fetch(`https://pypi.org/project/${pypiPackages[i]}`);
+                const text = await response.text();
+                const html = parse(text);
+                const github = html.querySelector('.github-repo-info')?.getAttribute('data-url')
+                if (github) packageList.push(github.replace('https://api.github.com/repos/', ''))
+                else {
+                    if (pipName.replace('https://pypi.org/project/', '')) {
+                        const queryString = stringify({
+                            q: `${pipName.replace('https://pypi.org/project/', '')} in:name language:python`,
+                            sort: 'stars',
+                            order: 'desc',
+                        })
+                        const potentialGithub = await octokit.request(`GET /search/repositories?${queryString}`)
+                        const potentialGithubUrl = potentialGithub.data.items[0].full_name
+                        packageList.push(potentialGithubUrl)
+                    }
+                }
+            } 
         }
         packageList = packageList.filter(pack => pack)
         const username = await octokit.request('GET /user', {})

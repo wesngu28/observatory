@@ -5,4 +5,5 @@ export default interface SimpleRepo {
     url: string;
     authorUrl: string;
     stargazers: number;
+    starred?: boolean;
 }
